@@ -10,7 +10,7 @@ on:
         required: true
 
 jobs:
-    check-compilation-server:
+    check-compilation:
         runs-on: ubuntu-latest
         steps:
           - name: Checkout Branch
