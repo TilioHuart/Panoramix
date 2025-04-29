@@ -5,7 +5,9 @@
 ** main
 */
 
-int main(void)
+#include "panoramix.h"
+
+int main(int const argc, char const *argv[])
 {
-    return 0;
+    return panoramix(argc, argv);
 }

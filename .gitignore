@@ -1,3 +1,5 @@
 panoramix
 coding-style-reports.log
 *.o
+compile_commands.json
+.cache

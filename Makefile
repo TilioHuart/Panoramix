@@ -6,6 +6,8 @@
 ##
 
 SRC	=	src/main.c
+SRC	+=	./src/panoramix.c
+SRC	+=	./src/parser/parse_flag.c
 
 
 OBJ	=	$(SRC:.c=.o)
