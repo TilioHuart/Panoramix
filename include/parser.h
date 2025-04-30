@@ -8,7 +8,8 @@
 #ifndef PARSER_H_
     #define PARSER_H_
 
-#include "village.h"
+    #include "village.h"
+
 int parse_flag(int const argc, char const *argv[], village_t *village);
 
 #endif

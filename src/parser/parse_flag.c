@@ -14,7 +14,7 @@
 #include <string.h>
 #include <unistd.h>
 
-int print_error(char *str)
+static int print_error(char *str)
 {
     if (str == NULL)
         return FAILURE;
@@ -30,6 +30,15 @@ static void set_village(char const *argv[], village_t *village)
     village->nb_refills = atoi(argv[4]);
 }
 
+static int handle_negative_number(char const *argv[], size_t *i)
+{
+    for (size_t y = 0; argv[*i][y] != '\0'; y++)
+        if (!isdigit(argv[*i][y]))
+            return print_error("USAGE: ./panoramix <nb_villagers> <pot_size> "
+                "<nb_fights> <nb_refills>\n");
+    return SUCCESS;
+}
+
 static int handle_flag_error(char const *argv[])
 {
     for (size_t i = 1; argv[i] != NULL; i++) {
@@ -37,11 +46,8 @@ static int handle_flag_error(char const *argv[])
             return print_error(
                 "USAGE: ./panoramix <nb_villagers> <pot_size> "
                 "<nb_fights> <nb_refills>\nValues must be >0.\n");
-        for (size_t y = 0; argv[i][y] != '\0'; y++)
-            if (!isdigit(argv[i][y]))
-                return print_error(
-                    "USAGE: ./panoramix <nb_villagers> <pot_size> "
-                    "<nb_fights> <nb_refills>\n");
+        if (handle_negative_number(argv, &i) == FAILURE)
+            return FAILURE;
     }
     return SUCCESS;
 }

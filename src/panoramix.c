@@ -9,7 +9,6 @@
 #include "village.h"
 #include "parser.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 int panoramix(int const argc, char const *argv[])
 {
@@ -17,7 +16,6 @@ int panoramix(int const argc, char const *argv[])
 
     if (parse_flag(argc, argv, village) == FAILURE)
         return EPITECH_FAILURE;
-    printf("village : %d %d %d %d\n", village->nv_villagers, village->pot_size, village->nb_fights, village->nb_refills);
     free(village);
     return SUCCESS;
 }
