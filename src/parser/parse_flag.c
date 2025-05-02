@@ -8,6 +8,8 @@
 #include "macros.h"
 #include "village.h"
 #include <ctype.h>
+#include <pthread.h>
+#include <semaphore.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,6 +32,14 @@ static void set_village(char const *argv[], village_t *village)
     village->nb_refills = atoi(argv[4]);
     village->thread_villager =
         malloc(sizeof(pthread_t) * village->nb_villagers);
+    sem_init(&village->pot, 0, village->pot_size);
+    village->druid_call = SLEEPY;
+    village->villager_id = 0;
+    pthread_mutex_init(&village->lock, NULL);
+    for (int i = 0; i < village->pot_size; i += 1) {
+        sem_post(&village->pot);
+    }
+    village->nb_serving_left = village->pot_size;
 }
 
 static int handle_negative_number(char const *argv[], size_t *i)

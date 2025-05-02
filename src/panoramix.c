@@ -11,6 +11,7 @@
 #include "village.h"
 #include "villager.h"
 #include <pthread.h>
+#include <semaphore.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,6 +35,17 @@ static int wake_up_village(village_t *village)
     return SUCCESS;
 }
 
+static void destroy_village(village_t *village)
+{
+    pthread_mutex_destroy(&village->lock);
+    sem_destroy(&village->pot);
+    if (village != NULL) {
+        if (village->thread_villager != NULL)
+            free(village->thread_villager);
+        free(village);
+    }
+}
+
 int panoramix(int const argc, char const *argv[])
 {
     village_t *village = (village_t *)malloc(sizeof(village_t));
@@ -41,6 +53,6 @@ int panoramix(int const argc, char const *argv[])
     if (parse_flag(argc, argv, village) == FAILURE)
         return EPITECH_FAILURE;
     wake_up_village(village);
-    free(village);
+    destroy_village(village);
     return SUCCESS;
 }

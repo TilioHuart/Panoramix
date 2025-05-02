@@ -5,10 +5,65 @@
 ** villager.c
 */
 
+#include "macros.h"
+#include "village.h"
+#include <pthread.h>
+#include <semaphore.h>
 #include <stdio.h>
 
-void *call_villager(void *village)
+static int setup_villager(village_t *village)
 {
-    printf("villager call\n");
+    int id = 0;
+
+    pthread_mutex_lock(&village->lock);
+    printf("Villager %d: Going into battle!\n", village->villager_id);
+    id = village->villager_id;
+    village->villager_id += 1;
+    pthread_mutex_unlock(&village->lock);
+    return id;
+}
+
+static int drink(village_t *village, int id)
+{
+    if (village->nb_serving_left > 0) {
+        sem_wait(&village->pot);
+        pthread_mutex_lock(&village->lock);
+        printf("Villager %d: I need a drink... I see %d servings left.\n", id,
+            village->nb_serving_left - 1);
+        village->nb_serving_left -= 1;
+        pthread_mutex_unlock(&village->lock);
+        return SUCCESS;
+    }
+    if (village->nb_serving_left <= 0 && village->druid_call == SLEEPY) {
+        pthread_mutex_lock(&village->lock);
+        printf("Villager %d: Hey Pano wake up! We need more potion.\n", id);
+        village->druid_call = CALL;
+        pthread_mutex_unlock(&village->lock);
+        return FAILURE;
+    }
+    return FAILURE;
+}
+
+static void figth(int id, int *nb_figths)
+{
+    if (*nb_figths > 0) {
+        *nb_figths -= 1;
+        printf("Villager %d: Take that roman scum! Only %d left.\n",
+            id, *nb_figths);
+    }
+}
+
+void *call_villager(void *tmp_village)
+{
+    village_t *village = (village_t *)tmp_village;
+    int nb_figths = village->nb_fights;
+    int id = setup_villager(village);
+
+    while (nb_figths > 0) {
+        if (drink(village, id) == SUCCESS) {
+            figth(id, &nb_figths);
+        }
+    }
+    printf("Villager %d: I'm going to sleep now.\n", id);
     return NULL;
 }
