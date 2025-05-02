@@ -18,14 +18,14 @@ static void fill_potion(village_t *village)
         printf("Druid: Ah Yes, yes, I'm awake! Working on it! Beware I can "
             "only make %d more refills after this one.\n",
             village->nb_refills -= 1);
-        village->druid_call = SLEEPY;
         for (int i = 0; i < village->pot_size; i += 1) {
             sem_post(&village->pot);
         }
         village->nb_serving_left = village->pot_size;
+        village->druid_call = SLEEPY;
         pthread_mutex_unlock(&village->lock);
     }
-    if (village->druid_call == CALL && village->nb_refills <= 0) {
+    if (village->nb_refills <= 0) {
         pthread_mutex_lock(&village->lock);
         printf("Druid: I'm out of viscum. I'm going back to... zZz\n");
         village->druid_call = LEAVE;

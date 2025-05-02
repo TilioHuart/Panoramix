@@ -74,5 +74,7 @@ int parse_flag(int const argc, char const *argv[], village_t *village)
         return FAILURE;
     }
     set_village(argv, village);
+    if (village->nb_villagers == 0)
+        return FAILURE;
     return SUCCESS;
 }
