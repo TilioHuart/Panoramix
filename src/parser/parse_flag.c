@@ -24,10 +24,12 @@ static int print_error(char *str)
 
 static void set_village(char const *argv[], village_t *village)
 {
-    village->nv_villagers = atoi(argv[1]);
+    village->nb_villagers = atoi(argv[1]);
     village->pot_size = atoi(argv[2]);
     village->nb_fights = atoi(argv[3]);
     village->nb_refills = atoi(argv[4]);
+    village->thread_villager =
+        malloc(sizeof(pthread_t) * village->nb_villagers);
 }
 
 static int handle_negative_number(char const *argv[], size_t *i)

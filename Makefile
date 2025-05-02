@@ -8,6 +8,8 @@
 SRC	=	src/main.c
 SRC	+=	./src/panoramix.c
 SRC	+=	./src/parser/parse_flag.c
+SRC	+=	./src/druid/druid.c
+SRC	+=	./src/villager/villager.c
 
 
 OBJ	=	$(SRC:.c=.o)
