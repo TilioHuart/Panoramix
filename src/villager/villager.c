@@ -23,15 +23,33 @@ static int setup_villager(village_t *village)
     return id;
 }
 
+void handle_simple_drink(village_t *village, int id)
+{
+    pthread_mutex_lock(&village->lock);
+    printf("Villager %d: I need a drink... I see %d servings left.\n", id,
+        village->nb_serving_left);
+    sem_wait(&village->pot);
+    village->nb_serving_left -= 1;
+    pthread_mutex_unlock(&village->lock);
+}
+
+void handle_particular_drink(village_t *village)
+{
+    pthread_mutex_lock(&village->lock);
+    sem_wait(&village->pot);
+    village->nb_serving_left -= 1;
+    village->has_fill = 0;
+    pthread_mutex_unlock(&village->lock);
+}
+
 static int drink(village_t *village, int id)
 {
+    if (village->has_fill == 1 && village->nb_serving_left > 0) {
+        handle_particular_drink(village);
+        return SUCCESS;
+    }
     if (village->nb_serving_left > 0) {
-        pthread_mutex_lock(&village->lock);
-        printf("Villager %d: I need a drink... I see %d servings left.\n", id,
-            village->nb_serving_left);
-        sem_wait(&village->pot);
-        village->nb_serving_left -= 1;
-        pthread_mutex_unlock(&village->lock);
+        handle_simple_drink(village, id);
         return SUCCESS;
     }
     if (village->nb_serving_left <= 0 && village->druid_call == SLEEPY) {
@@ -50,8 +68,8 @@ static void figth(int id, int *nb_figths)
 {
     if (*nb_figths > 0) {
         *nb_figths -= 1;
-        printf("Villager %d: Take that roman scum! Only %d left.\n",
-            id, *nb_figths);
+        printf("Villager %d: Take that roman scum! Only %d left.\n", id,
+            *nb_figths);
     }
 }
 

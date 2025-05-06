@@ -29,6 +29,7 @@ typedef struct village {
     enum druid_state druid_call;
     int villager_id;
     sem_t pot;
+    int has_fill;
     pthread_mutex_t lock;
 } village_t;
 

@@ -22,6 +22,7 @@ static void fill_potion(village_t *village)
             sem_post(&village->pot);
         }
         village->nb_serving_left = village->pot_size;
+        village->has_fill = 1;
         village->druid_call = SLEEPY;
         pthread_mutex_unlock(&village->lock);
     }

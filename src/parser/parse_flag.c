@@ -35,6 +35,7 @@ static void set_village(char const *argv[], village_t *village)
     sem_init(&village->pot, 0, village->pot_size);
     village->druid_call = SLEEPY;
     village->villager_id = 0;
+    village->has_fill = 0;
     pthread_mutex_init(&village->lock, NULL);
     for (int i = 0; i < village->pot_size; i += 1) {
         sem_post(&village->pot);
