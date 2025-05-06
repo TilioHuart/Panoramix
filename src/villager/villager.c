@@ -39,24 +39,20 @@ static int drink(village_t *village, int id)
     pthread_mutex_lock(&village->lock);
     if (village->has_fill == 1 && village->nb_serving_left > 0) {
         handle_particular_drink(village);
-        pthread_mutex_unlock(&village->lock);
-        return SUCCESS;
+        return pthread_mutex_unlock(&village->lock), SUCCESS;
     }
     if (village->nb_serving_left > 0) {
         handle_simple_drink(village, id);
-        pthread_mutex_unlock(&village->lock);
-        return SUCCESS;
+        return pthread_mutex_unlock(&village->lock), SUCCESS;
     }
     if (village->nb_serving_left == 0 && village->druid_call == SLEEPY) {
         printf("Villager %d: I need a drink... I see %d servings left.\n", id,
             village->nb_serving_left);
         printf("Villager %d: Hey Pano wake up! We need more potion.\n", id);
         village->druid_call = CALL;
-        pthread_mutex_unlock(&village->lock);
-        return FAILURE;
+        return pthread_mutex_unlock(&village->lock), FAILURE;
     }
-    pthread_mutex_unlock(&village->lock);
-    return FAILURE;
+    return pthread_mutex_unlock(&village->lock), FAILURE;
 }
 
 static void figth(int id, int *nb_figths)
