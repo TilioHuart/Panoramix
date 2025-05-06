@@ -26,16 +26,18 @@ static int setup_villager(village_t *village)
 static int drink(village_t *village, int id)
 {
     if (village->nb_serving_left > 0) {
-        sem_wait(&village->pot);
         pthread_mutex_lock(&village->lock);
         printf("Villager %d: I need a drink... I see %d servings left.\n", id,
-            village->nb_serving_left - 1);
+            village->nb_serving_left);
+        sem_wait(&village->pot);
         village->nb_serving_left -= 1;
         pthread_mutex_unlock(&village->lock);
         return SUCCESS;
     }
     if (village->nb_serving_left <= 0 && village->druid_call == SLEEPY) {
         pthread_mutex_lock(&village->lock);
+        printf("Villager %d: I need a drink... I see %d servings left.\n", id,
+            village->nb_serving_left);
         printf("Villager %d: Hey Pano wake up! We need more potion.\n", id);
         village->druid_call = CALL;
         pthread_mutex_unlock(&village->lock);
