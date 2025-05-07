@@ -31,30 +31,29 @@ void handle_simple_drink(village_t *village, int id)
     village->nb_serving_left -= 1;
 }
 
-void handle_particular_drink(village_t *village)
+static void ask_drink(village_t *village, int id)
 {
-    village->has_fill = 0;
+    printf("Villager %d: I need a drink... I see %d servings left.\n", id,
+        village->nb_serving_left);
+    printf("Villager %d: Hey Pano wake up! We need more potion.\n", id);
+    sem_wait(&village->pot);
+    village->nb_serving_left -= 1;
+    village->druid_call = CALL;
 }
 
 static int drink(village_t *village, int id)
 {
     pthread_mutex_lock(&village->lock);
-    if (village->has_fill == 1 && village->nb_serving_left > 0) {
-        handle_particular_drink(village);
-        return pthread_mutex_unlock(&village->lock), SUCCESS;
-    }
     if (village->nb_serving_left > 0) {
         handle_simple_drink(village, id);
-        return pthread_mutex_unlock(&village->lock), SUCCESS;
-    }
-    if (village->nb_serving_left == 0 && village->druid_call == SLEEPY) {
-        printf("Villager %d: I need a drink... I see %d servings left.\n", id,
-            village->nb_serving_left);
-        printf("Villager %d: Hey Pano wake up! We need more potion.\n", id);
-        village->druid_call = CALL;
+    } else if (village->nb_serving_left == 0 &&
+        village->druid_call == SLEEPY) {
+        ask_drink(village, id);
+    } else {
         return pthread_mutex_unlock(&village->lock), FAILURE;
     }
-    return pthread_mutex_unlock(&village->lock), FAILURE;
+    pthread_mutex_unlock(&village->lock);
+    return SUCCESS;
 }
 
 static void figth(int id, int *nb_figths)

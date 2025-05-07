@@ -7,6 +7,7 @@
 
 #include "macros.h"
 #include "village.h"
+#include "villager.h"
 #include <ctype.h>
 #include <pthread.h>
 #include <semaphore.h>
