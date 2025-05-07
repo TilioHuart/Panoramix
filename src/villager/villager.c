@@ -15,9 +15,11 @@ static int setup_villager(village_t *village)
 {
     int id = 0;
 
+    pthread_mutex_lock(&village->lock);
     printf("Villager %d: Going into battle!\n", village->villager_id);
     id = village->villager_id;
     village->villager_id += 1;
+    pthread_mutex_unlock(&village->lock);
     return id;
 }
 
