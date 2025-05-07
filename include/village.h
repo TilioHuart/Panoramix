@@ -24,6 +24,7 @@ typedef struct village {
     int nb_serving_left;
     int nb_fights;
     int nb_refills;
+    int nb_villager_sleeping;
     pthread_t *thread_villager;
     pthread_t thread_druid;
     enum druid_state druid_call;

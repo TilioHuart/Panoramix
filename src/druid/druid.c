@@ -44,7 +44,10 @@ void *call_druid(void *tmp_village)
     village_t *village = (village_t *)tmp_village;
 
     activate_druid();
-    while (village->druid_call != LEAVE)
+    while (village->druid_call != LEAVE) {
+        if (village->nb_villager_sleeping == village->nb_villagers)
+            return NULL;
         fill_potion(village);
+    }
     return NULL;
 }

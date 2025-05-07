@@ -76,5 +76,6 @@ void *call_villager(void *tmp_village)
         }
     }
     printf("Villager %d: I'm going to sleep now.\n", id);
+    village->nb_villager_sleeping += 1;
     return NULL;
 }
